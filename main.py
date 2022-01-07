@@ -2,7 +2,7 @@ import pygame
 
 
 def draw_wall(screen, wall_color, wall_x, wall_y, level):
-    f_name = [f'level_{level}_down.txt', f'level_{level}_left.txt']
+    f_name = [f'lab_map/level_{level}_down.txt', f'lab_map/level_{level}_left.txt']
     with open(f_name[0]) as file:
         data = file.read()
         for row in data.split('\n'):
