@@ -1,28 +1,29 @@
 import pygame
+from wall import Wall
 
 
-def draw_wall(screen, wall_color, wall_x, wall_y, level):
+def draw_wall(wall_color, x_coord, y_coord, level, group):
     f_name = [f'lab_map/level_{level}_down.txt', f'lab_map/level_{level}_left.txt']
     with open(f_name[0]) as file:
         data = file.read()
         for row in data.split('\n'):
             for symb in row:
                 if symb == '0':
-                    pygame.draw.rect(screen, wall_color, (wall_x, wall_y, 50, 5), 0)
-                wall_x += 45
-            wall_x = 0
-            wall_y += 45
+                    Wall(x_coord, y_coord, 50, 5, wall_color, group)
+                x_coord += 45
+            x_coord = 0
+            y_coord += 45
 
-    wall_x, wall_y = 0, 145
+    x_coord, y_coord = 0, 145
     with open(f_name[1]) as file:
         data = file.read()
         for row in data.split('\n'):
             for symb in row:
                 if symb == '|':
-                    pygame.draw.rect(screen, wall_color, (wall_x, wall_y, 5, 50), 0)
-                wall_x += 45
-            wall_x = 0
-            wall_y += 45
+                    Wall(x_coord, y_coord, 5, 50, wall_color, group)
+                x_coord += 45
+            x_coord = 0
+            y_coord += 45
 
 
 screen_color = (0, 0, 0)
@@ -44,10 +45,13 @@ pygame.display.set_caption('The maze infested with monsters')
 
 clock = pygame.time.Clock()
 
+level = 1
+
+# создание стен лабиринта
+walls = pygame.sprite.Group()
 wall_x = 0
 wall_y = 145
-
-level = 1
+draw_wall(wall_color, wall_x, wall_y, level, walls)
 
 running = True
 while running:
@@ -60,10 +64,7 @@ while running:
     screen.fill(screen_color)
 
     # Отображаем стены
-    draw_wall(screen, wall_color, wall_x, wall_y, level)
-
-
-
+    walls.draw(screen)
 
     # обновление экрана
     pygame.display.flip()
