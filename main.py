@@ -1,5 +1,6 @@
 import pygame
 from wall import Wall
+from player import Player
 
 
 def draw_wall(wall_color, x_coord, y_coord, level, group):
@@ -53,12 +54,29 @@ wall_x = 0
 wall_y = 145
 draw_wall(wall_color, wall_x, wall_y, level, walls)
 
+player = Player(start_dort[1][0], start_dort[1][1], 20, 20, walls)
+speed_player = 2
+
 running = True
 while running:
     for event in pygame.event.get():
         # при закрытии окна
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                player.move_x = 0 - speed_player
+            elif event.key == pygame.K_RIGHT:
+                player.move_x = speed_player
+            elif event.key == pygame.K_UP:
+                player.move_y = 0 - speed_player
+            elif event.key == pygame.K_DOWN:
+                player.move_y = speed_player
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                player.move_x = 0
+            elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                player.move_y = 0
 
     # отрисовка и изменение свойств объектов
     screen.fill(screen_color)
@@ -66,8 +84,13 @@ while running:
     # Отображаем стены
     walls.draw(screen)
 
+    # отображаем игрока
+    screen.blit(player.image, player.rect)
+
     # обновление экрана
     pygame.display.flip()
     clock.tick(60)
+
+    player.update()
 
 pygame.quit()
