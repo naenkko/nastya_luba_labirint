@@ -1,6 +1,22 @@
 import pygame
 from wall import Wall
 from player import Player
+from enemy import Enemy
+
+
+screen_color = (0, 0, 0)
+wall_color = (255, 255, 255)
+# цвета можно так сделать: pygame.Color('#008000')
+screen_size = width, height = 455, 600
+
+start_dort = {1: (10, 155),
+              2: (),
+              3: (),
+              4: (),
+              5: ()}
+
+enemy_coords_lv1 = [(190, 155), (235, 200), (10, 380)]
+enemy_move_lv1 = [(0, 1), (1, 0), (0, 1)]
 
 
 def draw_wall(wall_color, x_coord, y_coord, level, group):
@@ -27,19 +43,6 @@ def draw_wall(wall_color, x_coord, y_coord, level, group):
             y_coord += 45
 
 
-screen_color = (0, 0, 0)
-wall_color = (255, 255, 255)
-# цвета можно так сделать: pygame.Color('#008000')
-
-screen_size = width, height = 455, 600
-
-start_dort = {1: (10, 155),
-              2: (),
-              3: (),
-              4: (),
-              5: ()}
-
-
 pygame.init()
 screen = pygame.display.set_mode(screen_size)
 pygame.display.set_caption('The maze infested with monsters')
@@ -54,11 +57,18 @@ wall_x = 0
 wall_y = 145
 draw_wall(wall_color, wall_x, wall_y, level, walls)
 
+# создание врагов на поле
+enemies = pygame.sprite.Group()
+for i in range(len(enemy_coords_lv1)):
+    Enemy(enemy_coords_lv1[i][0], enemy_coords_lv1[i][1],
+          30, 30,
+          enemy_move_lv1[i][0], enemy_move_lv1[i][1], walls, enemies)
+
 # создание игрока
 player = Player(start_dort[1][0], start_dort[1][1], 20, 20, walls)
 speed_player = 2
 
-# создание точки, с которой игрок начинает движение
+# создание точки, с которой игрок начинает движение (уровень 1)
 start = pygame.sprite.Sprite()
 start.image = pygame.Surface([30, 30])
 start.image.fill((255, 0, 0))
@@ -69,7 +79,6 @@ start.rect.y = start_dort[1][1]
 running = True
 while running:
     for event in pygame.event.get():
-        # при закрытии окна
         if event.type == pygame.QUIT:
             running = False
         elif event.type == pygame.KEYDOWN:
@@ -87,7 +96,6 @@ while running:
             elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                 player.move_y = 0
 
-    # отрисовка и изменение свойств объектов
     screen.fill(screen_color)
 
     # Отображаем стены
@@ -95,6 +103,9 @@ while running:
 
     # отображаем точку начала
     screen.blit(start.image, start.rect)
+
+    # отображаем врагов
+    enemies.draw(screen)
 
     # отображаем игрока
     screen.blit(player.image, player.rect)
@@ -104,5 +115,6 @@ while running:
     clock.tick(60)
 
     player.update()
+    enemies.update()
 
 pygame.quit()
