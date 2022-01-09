@@ -54,8 +54,17 @@ wall_x = 0
 wall_y = 145
 draw_wall(wall_color, wall_x, wall_y, level, walls)
 
+# создание игрока
 player = Player(start_dort[1][0], start_dort[1][1], 20, 20, walls)
 speed_player = 2
+
+# создание точки, с которой игрок начинает движение
+start = pygame.sprite.Sprite()
+start.image = pygame.Surface([30, 30])
+start.image.fill((255, 0, 0))
+start.rect = start.image.get_rect()
+start.rect.x = start_dort[1][0]
+start.rect.y = start_dort[1][1]
 
 running = True
 while running:
@@ -68,7 +77,7 @@ while running:
                 player.move_x = 0 - speed_player
             elif event.key == pygame.K_RIGHT:
                 player.move_x = speed_player
-            elif event.key == pygame.K_UP:
+            if event.key == pygame.K_UP:
                 player.move_y = 0 - speed_player
             elif event.key == pygame.K_DOWN:
                 player.move_y = speed_player
@@ -83,6 +92,9 @@ while running:
 
     # Отображаем стены
     walls.draw(screen)
+
+    # отображаем точку начала
+    screen.blit(start.image, start.rect)
 
     # отображаем игрока
     screen.blit(player.image, player.rect)

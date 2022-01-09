@@ -19,8 +19,8 @@ class Player(pygame.sprite.Sprite):
         self.walls_group = walls_group
 
     def update(self, *args):
-        # изменяем координаты
-        self.rect = self.rect.move(self.move_x, self.move_y)
+        # изменяем координаты по горизонтали
+        self.rect.x += self.move_x
 
         # проверка на столконовение со стенами
         hit_wall = pygame.sprite.spritecollide(self, self.walls_group, False)
@@ -29,6 +29,13 @@ class Player(pygame.sprite.Sprite):
                 self.rect.right = wall.rect.left
             elif self.move_x < 0:
                 self.rect.left = wall.rect.right
+
+        # изменяем координаты по вертикали
+        self.rect.y += self.move_y
+
+        # проверка на столконовение со стенами
+        hit_wall = pygame.sprite.spritecollide(self, self.walls_group, False)
+        for wall in hit_wall:
             if self.move_y > 0:
                 self.rect.bottom = wall.rect.top
             elif self.move_y < 0:
