@@ -65,7 +65,7 @@ for i in range(len(enemy_coords_lv1)):
           enemy_move_lv1[i][0], enemy_move_lv1[i][1], walls, enemies)
 
 # создание игрока
-player = Player(start_dort[1][0], start_dort[1][1], 20, 20, walls)
+player = Player(start_dort[1][0], start_dort[1][1], 20, 20, walls, enemies)
 speed_player = 2
 
 # создание точки, с которой игрок начинает движение (уровень 1)
