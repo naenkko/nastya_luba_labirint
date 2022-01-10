@@ -19,7 +19,7 @@ class Player(pygame.sprite.Sprite):
         self.move_x = 0
         self.move_y = 0
 
-        self.lives = 3
+        self.lives = 5
 
         self.walls_group = walls_group
         self.enemy_group = enemy_group
@@ -51,6 +51,5 @@ class Player(pygame.sprite.Sprite):
         if pygame.sprite.spritecollideany(self, self.enemy_group):
             self.rect.x = self.start_coord_x
             self.rect.y = self.start_coord_y
-            self.lives -= 1
 
         # здесь будет проверка жизней, если их 0, то игрок возвращается на 1 уровень

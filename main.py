@@ -10,13 +10,19 @@ wall_color = (255, 255, 255)
 screen_size = width, height = 455, 600
 
 start_dort = {1: (10, 155),
-              2: (),
-              3: (),
-              4: (),
-              5: ()}
+              2: (415, 155),
+              3: (10, 560),
+              4: (235, 155),
+              5: (10, 335)}
 
-enemy_coords_lv1 = [(190, 155), (235, 200), (10, 380)]
-enemy_move_lv1 = [(0, 1), (1, 0), (0, 1)]
+enemy_info = {1: {'coords': [(190, 155), (235, 200), (10, 380)], 'move': [(0, 1), (1, 0), (0, 1)]},
+              2: {'coords': [(190, 155), (280, 425), (10, 335), (100, 515)], 'move': [(0, 1), (0, 1), (1, 0), (1, 0)]},
+              3: {'coords': [(145, 200), (415, 155), (100, 335)], 'move': [(1, 0), (0, 1), (1, 0)]},
+              4: {'coords': [(145, 155), (235, 515), (10, 155), (190, 335), (370, 380)],
+                  'move': [(0, 1), (1, 0), (0, 1), (1, 0), (0, 1)]},
+              5: {'coords': [(10, 560), (280, 155), (190, 245), (415, 155), (235, 425)],
+                  'move': [(1, 0), (0, 1), (0, 1), (0, 1), (1, 0)]}
+              }
 
 
 def draw_wall(wall_color, x_coord, y_coord, level, group):
@@ -59,13 +65,13 @@ draw_wall(wall_color, wall_x, wall_y, level, walls)
 
 # создание врагов на поле
 enemies = pygame.sprite.Group()
-for i in range(len(enemy_coords_lv1)):
-    Enemy(enemy_coords_lv1[i][0], enemy_coords_lv1[i][1],
+for i in range(len(enemy_info[level]['coords'])):
+    Enemy(enemy_info[level]['coords'][i][0], enemy_info[level]['coords'][i][1],
           30, 30,
-          enemy_move_lv1[i][0], enemy_move_lv1[i][1], walls, enemies)
+          enemy_info[level]['move'][i][0], enemy_info[level]['move'][i][1], walls, enemies)
 
 # создание игрока
-player = Player(start_dort[1][0], start_dort[1][1], 20, 20, walls, enemies)
+player = Player(start_dort[level][0], start_dort[level][1], 20, 20, walls, enemies)
 speed_player = 2
 
 # создание точки, с которой игрок начинает движение (уровень 1)
@@ -73,8 +79,8 @@ start = pygame.sprite.Sprite()
 start.image = pygame.Surface([30, 30])
 start.image.fill((255, 0, 0))
 start.rect = start.image.get_rect()
-start.rect.x = start_dort[1][0]
-start.rect.y = start_dort[1][1]
+start.rect.x = start_dort[level][0]
+start.rect.y = start_dort[level][1]
 
 running = True
 while running:
