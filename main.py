@@ -129,7 +129,7 @@ while running:
         enemies.empty()
         create_level(level) # создаем новый уровень
 
-    elif player.next_level and level > 5: # !что будет происходить, когда игрок ройдет 5 уровень!
+    elif player.next_level and level > 5: # !что будет происходить, когда игрок пройдет 5 уровень!
         pass
 
     else: # если не дошел до финиша
