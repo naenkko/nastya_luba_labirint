@@ -83,7 +83,7 @@ pygame.display.set_caption('The maze infested with monsters')
 
 clock = pygame.time.Clock()
 
-level = 4
+level = 1
 
 walls = pygame.sprite.Group()
 finish = pygame.sprite.Group()
