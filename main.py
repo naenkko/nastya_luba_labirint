@@ -299,7 +299,7 @@ pygame.display.set_caption('The maze infested with monsters')
 
 clock = pygame.time.Clock()
 
-level = 2
+level = 1
 
 walls = pygame.sprite.Group()
 finish = pygame.sprite.Group()
@@ -308,7 +308,7 @@ monets = pygame.sprite.Group()
 
 # создание игрока
 player = Player(start_dort[level][0], start_dort[level][1], 20, 20, walls, enemies, finish, monets)
-speed_player = 2
+speed_player = 3
 
 # создание точки, с которой игрок начинает движение
 start = pygame.sprite.Sprite()
