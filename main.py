@@ -2,6 +2,7 @@ import pygame, sys
 from wall import Wall
 from player import Player
 from enemy import Enemy
+from monet import Monet
 
 
 pygame.font.init()
@@ -26,6 +27,13 @@ enemy_info = {1: {'coords': [(190, 155), (235, 200), (10, 380), (415, 155)], 'mo
               5: {'coords': [(10, 560), (280, 155), (190, 245), (415, 155), (235, 425)],
                   'move': [(1, 0), (0, 1), (0, 1), (0, 1), (1, 0)]}
               }
+
+monet_coords = {1: [(375, 250), (60, 385), (15, 565)],
+                2: [(375, 205), (60, 205), (375, 430), (150, 565), (375, 565)],
+                3: [(285, 250), (375, 565), (60, 475), (15, 295), (375, 430), (240, 565)],
+                4: [(375, 160), (105, 340), (195, 475), (420, 160), (420, 475), (330, 565)],
+                5: [(105, 385), (195, 520), (285, 475), (105, 250), (375, 160), (15, 250)]
+                }
 
 
 def quit():
@@ -105,6 +113,9 @@ def progress():
 
             # отображаем точку начала
             screen.blit(start.image, start.rect)
+
+            # отображаем монеты
+            monets.draw(screen)
 
             # отображаем врагов
             enemies.draw(screen)
@@ -196,6 +207,10 @@ def create_level(level):
               30, 30,
               enemy_info[level]['move'][i][0], enemy_info[level]['move'][i][1], walls, enemies)
 
+    # создание монет на поле
+    for i in range(len(monet_coords[level])):
+        Monet(monet_coords[level][i][0], monet_coords[level][i][1], 20, 20, monets)
+
     # изменение координат игрока
     player.rect.x = start_dort[level][0]
     player.rect.y = start_dort[level][1]
@@ -219,6 +234,7 @@ level = 1
 walls = pygame.sprite.Group()
 finish = pygame.sprite.Group()
 enemies = pygame.sprite.Group()
+monets = pygame.sprite.Group()
 
 # создание игрока
 player = Player(start_dort[level][0], start_dort[level][1], 20, 20, walls, enemies, finish)
