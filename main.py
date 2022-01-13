@@ -28,9 +28,9 @@ enemy_info = {1: {'coords': [(190, 155), (235, 200), (10, 380), (415, 155)], 'mo
                   'move': [(1, 0), (0, 1), (0, 1), (0, 1), (1, 0)]}
               }
 
-monet_coords = {1: [(375, 250), (60, 385), (15, 565)],
-                2: [(375, 205), (60, 205), (375, 430), (150, 565), (375, 565)],
-                3: [(285, 250), (375, 565), (60, 475), (15, 295), (375, 430), (240, 565)],
+monet_coords = {1: [(420, 340), (60, 385), (15, 565)],
+                2: [(375, 205), (60, 205), (375, 430), (375, 565)],
+                3: [(240, 205), (375, 430)],
                 4: [(375, 160), (105, 340), (195, 475), (420, 160), (420, 475), (330, 565)],
                 5: [(105, 385), (195, 520), (285, 475), (105, 250), (375, 160), (15, 250)]
                 }
@@ -91,9 +91,14 @@ def progress():
                 elif event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                     player.move_y = 0
 
+        if player.open_door: # если все монеты собраны, стенка выхода меняет цвет
+            for f in finish:
+                f.image.fill(screen_color)
+
         if player.next_level and level <= 5: # проверка, дошел ли игрок до финиша
             level += 1
             player.next_level = False
+            player.open_door = False
             walls.empty() # очищаем все группы спрайтов
             finish.empty()
             enemies.empty()
@@ -176,7 +181,7 @@ def draw_wall(wall_color, finish_color, x_coord, y_coord, level, group_wall, gro
                 if symb == '0':
                     Wall(x_coord, y_coord, 50, 5, wall_color, group_wall)
                 elif symb == '!':
-                    Wall(x_coord, y_coord, 50, 5, finish_color, group_finish)
+                    Wall(x_coord, y_coord, 50, 5, (255, 0, 0), group_finish)
                 x_coord += 45
             x_coord = 0
             y_coord += 45
@@ -189,7 +194,7 @@ def draw_wall(wall_color, finish_color, x_coord, y_coord, level, group_wall, gro
                 if symb == '|':
                     Wall(x_coord, y_coord, 5, 50, wall_color, group_wall)
                 elif symb == '!':
-                    Wall(x_coord, y_coord, 5, 50, finish_color, group_finish)
+                    Wall(x_coord, y_coord, 5, 50, (255, 0, 0), group_finish)
                 x_coord += 45
             x_coord = 0
             y_coord += 45
@@ -229,7 +234,7 @@ pygame.display.set_caption('The maze infested with monsters')
 
 clock = pygame.time.Clock()
 
-level = 1
+level = 2
 
 walls = pygame.sprite.Group()
 finish = pygame.sprite.Group()
@@ -237,7 +242,7 @@ enemies = pygame.sprite.Group()
 monets = pygame.sprite.Group()
 
 # создание игрока
-player = Player(start_dort[level][0], start_dort[level][1], 20, 20, walls, enemies, finish)
+player = Player(start_dort[level][0], start_dort[level][1], 20, 20, walls, enemies, finish, monets)
 speed_player = 2
 
 # создание точки, с которой игрок начинает движение
