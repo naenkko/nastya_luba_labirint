@@ -1,3 +1,4 @@
+import datetime
 import pygame, sys
 from wall import Wall
 from player import Player
@@ -7,33 +8,6 @@ from monet import Monet
 
 pygame.font.init()
 menu_font = pygame.font.Font(None, 48)
-
-screen_color = (0, 0, 0)
-wall_color = (255, 255, 255)
-# цвета можно так сделать: pygame.Color('#008000')
-screen_size = width, height = 455, 600
-
-start_dort = {1: (10, 155),
-              2: (415, 155),
-              3: (10, 560),
-              4: (235, 155),
-              5: (10, 335)}
-
-enemy_info = {1: {'coords': [(190, 155), (235, 200), (10, 380), (415, 155)], 'move': [(0, 1), (1, 0), (0, 1), (0, 1)]},
-              2: {'coords': [(190, 155), (280, 425), (10, 335), (100, 515)], 'move': [(0, 1), (0, 1), (1, 0), (1, 0)]},
-              3: {'coords': [(145, 200), (415, 155), (100, 335)], 'move': [(1, 0), (0, 1), (1, 0)]},
-              4: {'coords': [(145, 155), (235, 515), (10, 155), (190, 335), (370, 380)],
-                  'move': [(0, 1), (1, 0), (0, 1), (1, 0), (0, 1)]},
-              5: {'coords': [(10, 560), (280, 155), (190, 245), (415, 155), (235, 425)],
-                  'move': [(1, 0), (0, 1), (0, 1), (0, 1), (1, 0)]}
-              }
-
-monet_coords = {1: [(420, 340), (60, 385), (15, 565)],
-                2: [(375, 205), (60, 205), (375, 430), (375, 565)],
-                3: [(240, 205), (375, 430)],
-                4: [(375, 160), (105, 340), (195, 475), (420, 160), (420, 475), (330, 565)],
-                5: [(105, 385), (195, 520), (285, 475), (105, 250), (375, 160), (15, 250)]
-                }
 
 
 def quit():
@@ -67,10 +41,48 @@ def pause():
         clock.tick(10)
 
 
+def the_end():
+    global running
+    while running:
+        screen.fill((15, 82, 186))
+        message_1 = menu_font.render('РЕЗУЛЬТАТЫ:', True, (0, 0, 0))
+        message_2 = menu_font.render('всего:', True, (0, 0, 0))
+        message_3 = menu_font.render('потраченных жизней - ', True, (0, 0, 0))
+        message_4 = menu_font.render('собранных монет - ', True, (0, 0, 0))
+        message_5 = menu_font.render('потраченного времени - ', True, (0, 0, 0))
+        message_6 = menu_font.render('чтобы выйти из игры', True, (0, 0, 0))
+        message_7 = menu_font.render('нажмите Q', True, (0, 0, 0))
+        message_8 = menu_font.render('вернуться на старт - B', True, (0, 0, 0))
+        screen.blit(message_1, (100, 120))
+        screen.blit(message_2, (1250, 160))
+        screen.blit(message_3, (10, 200))
+        screen.blit(message_4, (10, 240))
+        screen.blit(message_5, (10, 280))
+        screen.blit(message_6, (10, 320))
+        screen.blit(message_7, (700, 360))
+        screen.blit(message_8, (10, 400))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_b: # if u press B u will back to the start menu (пока не работает)
+                    start_menu()
+                elif event.key == pygame.K_q: # if u press Q u will get out of the game
+                    quit()
+
+        pygame.display.update()
+
+
 def progress():
     global running
     global level
+
+    seconds = datetime.datetime.now().second
+    minute = datetime.datetime.now().minute
+    count = 0
+
     while running:
+        timer = 30
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -96,19 +108,44 @@ def progress():
                 f.image.fill(screen_color)
 
         if player.next_level and level <= 5: # проверка, дошел ли игрок до финиша
+            seconds = datetime.datetime.now().second
+            minute = datetime.datetime.now().minute
+            count = 0
+            timer = 30
             level += 1
             player.next_level = False
             player.open_door = False
             walls.empty() # очищаем все группы спрайтов
             finish.empty()
             enemies.empty()
-            create_level(level) # создаем новый уровень
+            if level == 6:
+                level = 1
+                the_end()
+            else:
+                create_level(level)  # создаем новый уровень
 
         elif player.next_level and level > 5: # !что будет происходить, когда игрок пройдет 5 уровень!
-            pass
+            the_end()
 
         else: # если не дошел до финиша
             screen.fill(screen_color)
+            timer_text = menu_font.render(f"{timer - count}", True, (255, 255, 255))
+            screen.blit(timer_text, (10, 10))
+
+            if (seconds + 30 == datetime.datetime.now().second) or \
+                    (minute + 1 == datetime.datetime.now().minute and
+                     datetime.datetime.now().second == 30 - (60 - seconds)):
+                seconds = datetime.datetime.now().second
+                minute = datetime.datetime.now().minute
+                count = 0
+                timer = 30
+
+            elif (seconds + count == datetime.datetime.now().second) or \
+                    (minute + 1 == datetime.datetime.now().minute and
+                     datetime.datetime.now().second + 60 == seconds + count):
+                count += 1
+                timer_text = menu_font.render(f"{timer - count}", True, (255, 255, 255))
+                screen.blit(timer_text, (10, 10))
 
             # Отображаем стены
             walls.draw(screen)
@@ -226,6 +263,34 @@ def create_level(level):
     # изменение координат начальной точки
     start.rect.x = start_dort[level][0]
     start.rect.y = start_dort[level][1]
+
+
+screen_color = (0, 0, 0)
+wall_color = (255, 255, 255)
+# цвета можно так сделать: pygame.Color('#008000')
+screen_size = width, height = 455, 600
+
+start_dort = {1: (10, 155),
+              2: (415, 155),
+              3: (10, 560),
+              4: (235, 155),
+              5: (10, 335)}
+
+enemy_info = {1: {'coords': [(190, 155), (235, 200), (10, 380), (415, 155)], 'move': [(0, 1), (1, 0), (0, 1), (0, 1)]},
+              2: {'coords': [(190, 155), (280, 425), (10, 335), (100, 515)], 'move': [(0, 1), (0, 1), (1, 0), (1, 0)]},
+              3: {'coords': [(415, 155), (100, 335)], 'move': [(0, 1), (1, 0)]},
+              4: {'coords': [(145, 155), (235, 515), (10, 155), (190, 335), (370, 380)],
+                  'move': [(0, 1), (1, 0), (0, 1), (1, 0), (0, 1)]},
+              5: {'coords': [(10, 560), (280, 155), (190, 245), (415, 155), (235, 425)],
+                  'move': [(1, 0), (0, 1), (0, 1), (0, 1), (1, 0)]}
+              }
+
+monet_coords = {1: [(420, 340)],
+                2: [(375, 205)],
+                3: [(240, 205)],
+                4: [(375, 160)],
+                5: [(105, 385)]
+                }
 
 
 pygame.init()
