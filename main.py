@@ -8,6 +8,7 @@ from monet import Monet
 
 pygame.font.init()
 menu_font = pygame.font.Font(None, 48)
+lives_monets_font = pygame.font.Font(None, 28)
 
 
 def quit():
@@ -115,6 +116,7 @@ def progress():
             level += 1
             player.next_level = False
             player.open_door = False
+            player.selected_monets = 0
             walls.empty() # очищаем все группы спрайтов
             finish.empty()
             enemies.empty()
@@ -124,13 +126,10 @@ def progress():
             else:
                 create_level(level)  # создаем новый уровень
 
-        elif player.next_level and level > 5: # !что будет происходить, когда игрок пройдет 5 уровень!
-            the_end()
-
         else: # если не дошел до финиша
             screen.fill(screen_color)
             timer_text = menu_font.render(f"{timer - count}", True, (255, 255, 255))
-            screen.blit(timer_text, (10, 10))
+            screen.blit(timer_text, (10, 100))
 
             if (seconds + 30 == datetime.datetime.now().second) or \
                     (minute + 1 == datetime.datetime.now().minute and
@@ -145,7 +144,17 @@ def progress():
                      datetime.datetime.now().second + 60 == seconds + count):
                 count += 1
                 timer_text = menu_font.render(f"{timer - count}", True, (255, 255, 255))
-                screen.blit(timer_text, (10, 10))
+                screen.blit(timer_text, (10, 100))
+
+            # отображаем информацию о количестве жизней
+            about_lives_mess = lives_monets_font.render(f'Количество жизней: {player.lives}', True, (255, 162, 0))
+            screen.blit(about_lives_mess, (235, 95))
+
+            # отображаем информацию о количестве собранных монет
+            about_monets_mess = lives_monets_font.render(f'Собранные монеты: '
+                                                         f'{player.selected_monets}/{len(monet_coords[level])}',
+                                                         True, (255, 255, 0))
+            screen.blit(about_monets_mess, (225, 120))
 
             # Отображаем стены
             walls.draw(screen)
@@ -175,6 +184,7 @@ def progress():
 
 def start_menu():
     global running
+    global level
     while running:
         screen.fill((15, 82, 186))
         name1 = menu_font.render('THE MAZE INFESTED', True, (0, 0, 0))
@@ -201,7 +211,8 @@ def start_menu():
             if event.type == pygame.QUIT:
                 sys.exit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_s:# if u press S the game will start
+                if event.key == pygame.K_s: # if u press S the game will start
+                    create_level(level)
                     progress()
                 elif event.key == pygame.K_q: # if u press Q u will get out of the game
                     quit()
@@ -209,7 +220,7 @@ def start_menu():
         pygame.display.update()
 
 
-def draw_wall(wall_color, finish_color, x_coord, y_coord, level, group_wall, group_finish):
+def draw_wall(wall_color, x_coord, y_coord, level, group_wall, group_finish):
     f_name = [f'lab_map/level_{level}_down.txt', f'lab_map/level_{level}_left.txt']
     with open(f_name[0]) as file:
         data = file.read()
@@ -241,7 +252,7 @@ def create_level(level):
     # создание стен лабиринта
     wall_x = 0
     wall_y = 145
-    draw_wall(wall_color, screen_color, wall_x, wall_y, level, walls, finish)
+    draw_wall(wall_color, wall_x, wall_y, level, walls, finish)
 
     # создание врагов на поле
     for i in range(len(enemy_info[level]['coords'])):
@@ -252,6 +263,9 @@ def create_level(level):
     # создание монет на поле
     for i in range(len(monet_coords[level])):
         Monet(monet_coords[level][i][0], monet_coords[level][i][1], 20, 20, monets)
+
+    if level == 1:
+        player.lives = 5
 
     # изменение координат игрока
     player.rect.x = start_dort[level][0]
@@ -276,20 +290,20 @@ start_dort = {1: (10, 155),
               4: (235, 155),
               5: (10, 335)}
 
-enemy_info = {1: {'coords': [(190, 155), (235, 200), (10, 380), (415, 155)], 'move': [(0, 1), (1, 0), (0, 1), (0, 1)]},
-              2: {'coords': [(190, 155), (280, 425), (10, 335), (100, 515)], 'move': [(0, 1), (0, 1), (1, 0), (1, 0)]},
-              3: {'coords': [(415, 155), (100, 335)], 'move': [(0, 1), (1, 0)]},
-              4: {'coords': [(145, 155), (235, 515), (10, 155), (190, 335), (370, 380)],
-                  'move': [(0, 1), (1, 0), (0, 1), (1, 0), (0, 1)]},
-              5: {'coords': [(10, 560), (280, 155), (190, 245), (415, 155), (235, 425)],
-                  'move': [(1, 0), (0, 1), (0, 1), (0, 1), (1, 0)]}
+enemy_info = {1: {'coords': [(325, 245), (10, 425)], 'move': [(0, 1), (1, 0)]},
+              2: {'coords': [(55, 380), (100, 515), (280, 425)], 'move': [(1, 0), (1, 0), (0, 1)]},
+              3: {'coords': [(415, 155), (190, 470), (10, 155)], 'move': [(0, 1), (1, 0), (1, 0)]},
+              4: {'coords': [(145, 155), (10, 515), (370, 380), (235, 515)],
+                  'move': [(0, 1), (1, 0), (0, 1), (1, 0)]},
+              5: {'coords': [(10, 560), (145, 155), (190, 245)],
+                  'move': [(1, 0), (1, 0), (0, 1)]}
               }
 
-monet_coords = {1: [(420, 340)],
-                2: [(375, 205)],
-                3: [(240, 205)],
-                4: [(375, 160)],
-                5: [(105, 385)]
+monet_coords = {1: [(240, 250), (105, 520)],
+                2: [(15, 250), (330, 160)],
+                3: [(60, 160), (195, 430)],
+                4: [(105, 205), (375, 385), (285, 565)],
+                5: [(105, 250), (195, 385), (150, 520)]
                 }
 
 
@@ -315,8 +329,6 @@ start = pygame.sprite.Sprite()
 start.image = pygame.Surface([30, 30])
 start.image.fill((255, 0, 0))
 start.rect = start.image.get_rect()
-
-create_level(level)
 
 running = True
 

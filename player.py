@@ -20,6 +20,7 @@ class Player(pygame.sprite.Sprite):
         self.move_y = 0
 
         self.lives = 5
+        self.selected_monets = 0
 
         self.next_level = False
         self.open_door = False
@@ -83,6 +84,7 @@ class Player(pygame.sprite.Sprite):
         # проверка на столкновение с монетами
         selected_monet = pygame.sprite.spritecollide(self, self.monet_group, False)
         for monet in selected_monet:
+            self.selected_monets += 1
             monet.kill()
 
         # проверка на столкновение с монстрами
