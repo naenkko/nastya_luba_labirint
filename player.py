@@ -52,8 +52,7 @@ class Player(pygame.sprite.Sprite):
         # if left is False and right is False:
         #     self.image = pygame.image.load(straight_walk)
 
-        self.image = pygame.Surface([width, height])
-        self.image.fill((0, 0, 255))
+        self.image = pygame.image.load('images/new_player7.png')
 
         self.rect = self.image.get_rect()
         self.rect.x = x_coord
