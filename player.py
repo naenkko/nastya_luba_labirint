@@ -6,6 +6,51 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, x_coord, y_coord, width, height, walls_group, enemy_group, finish_group, monets):
         super().__init__()
 
+        # left, right = False, False
+        # right_walk = ['player1.png', 'player2.png', 'player3.png', 'player4.png']
+        # left_walk = ['player5.png', 'player6.png', 'player7.png', 'player8.png']
+        # straight_walk = 'player9.png'
+        # if left is True and right is False:
+        #     count = 5
+        #     self.last_update = pygame.time.get_ticks()
+        #     if count == 5 and pygame.time.get_ticks() - self.last_update > 5:
+        #         self.image = pygame.image.load(left_walk[0])
+        #         count += 1
+        #         self.last_update = pygame.time.get_ticks()
+        #     elif count == 6 and pygame.time.get_ticks() - self.last_update > 5:
+        #         self.image = pygame.image.load(left_walk[1])
+        #         count += 1
+        #         self.last_update = pygame.time.get_ticks()
+        #     elif count == 7 and pygame.time.get_ticks() - self.last_update > 5:
+        #         self.image = pygame.image.load(left_walk[2])
+        #         count += 1
+        #         self.last_update = pygame.time.get_ticks()
+        #     elif count == 8 and pygame.time.get_ticks() - self.last_update > 5:
+        #         self.image = pygame.image.load(left_walk[1])
+        #         count -= 3
+        #         self.last_update = pygame.time.get_ticks()
+        # if left is False and right is True:
+        #     count = 1
+        #     self.last_update = pygame.time.get_ticks()
+        #     if count == 1 and pygame.time.get_ticks() - self.last_update > 5:
+        #         self.image = pygame.image.load(right_walk[0])
+        #         count += 1
+        #         self.last_update = pygame.time.get_ticks()
+        #     elif count == 2 and pygame.time.get_ticks() - self.last_update > 5:
+        #         self.image = pygame.image.load(right_walk[1])
+        #         count += 1
+        #         self.last_update = pygame.time.get_ticks()
+        #     elif count == 3 and pygame.time.get_ticks() - self.last_update > 5:
+        #         self.image = pygame.image.load(right_walk[2])
+        #         count += 1
+        #         self.last_update = pygame.time.get_ticks()
+        #     elif count == 4 and pygame.time.get_ticks() - self.last_update > 5:
+        #         self.image = pygame.image.load(right_walk[1])
+        #         count -= 3
+        #         self.last_update = pygame.time.get_ticks()
+        # if left is False and right is False:
+        #     self.image = pygame.image.load(straight_walk)
+
         self.image = pygame.Surface([width, height])
         self.image.fill((0, 0, 255))
 
@@ -20,6 +65,7 @@ class Player(pygame.sprite.Sprite):
         self.move_y = 0
 
         self.lives = 5
+        self.used_lives = 0
         self.selected_monets = 0
 
         self.next_level = False

@@ -9,6 +9,7 @@ from monet import Monet
 pygame.font.init()
 menu_font = pygame.font.Font(None, 48)
 lives_monets_font = pygame.font.Font(None, 28)
+seconds, minute, count, flag, flag2, count2 = 0, 0, 0, False, False, 0
 
 
 def quit():
@@ -44,29 +45,30 @@ def pause():
 
 def the_end():
     global running
+    global num_of_try
     while running:
         screen.fill((15, 82, 186))
         message_1 = menu_font.render('РЕЗУЛЬТАТЫ:', True, (0, 0, 0))
         message_2 = menu_font.render('всего:', True, (0, 0, 0))
-        message_3 = menu_font.render('потраченных жизней - ', True, (0, 0, 0))
-        message_4 = menu_font.render('собранных монет - ', True, (0, 0, 0))
-        message_5 = menu_font.render('потраченного времени - ', True, (0, 0, 0))
-        message_6 = menu_font.render('чтобы выйти из игры', True, (0, 0, 0))
-        message_7 = menu_font.render('нажмите Q', True, (0, 0, 0))
-        message_8 = menu_font.render('вернуться на старт - B', True, (0, 0, 0))
+        message_3 = menu_font.render(f'потраченных жизней - {player.used_lives}', True, (0, 0, 0))
+        message_4 = menu_font.render('потраченного времени - ', True, (0, 0, 0))
+        message_5 = menu_font.render('чтобы выйти из игры', True, (0, 0, 0))
+        message_6 = menu_font.render('нажмите Q', True, (0, 0, 0))
+        message_7 = menu_font.render('вернуться на старт - B', True, (0, 0, 0))
         screen.blit(message_1, (100, 120))
         screen.blit(message_2, (1250, 160))
         screen.blit(message_3, (10, 200))
         screen.blit(message_4, (10, 240))
         screen.blit(message_5, (10, 280))
-        screen.blit(message_6, (10, 320))
-        screen.blit(message_7, (700, 360))
-        screen.blit(message_8, (10, 400))
+        screen.blit(message_6, (700, 320))
+        screen.blit(message_7, (10, 360))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_b: # if u press B u will back to the start menu (пока не работает)
+                if event.key == pygame.K_b: # if u press B u will back to the start menu
+                    num_of_try = 1
+                    player.used_lives = 0
                     start_menu()
                 elif event.key == pygame.K_q: # if u press Q u will get out of the game
                     quit()
@@ -77,10 +79,15 @@ def the_end():
 def progress():
     global running
     global level
+    global num_of_try
+    global seconds
+    global minute
+    global count, count2
+    global flag, flag2
+    global left, right
 
     seconds = datetime.datetime.now().second
     minute = datetime.datetime.now().minute
-    count = 0
 
     while running:
         timer = 30
@@ -89,15 +96,20 @@ def progress():
                 running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
+                    # player.left, player.right = True, False
                     player.move_x = 0 - speed_player
                 elif event.key == pygame.K_RIGHT:
+                    # player.left, player.right = False, True
                     player.move_x = speed_player
                 if event.key == pygame.K_UP:
+                    # player.left, player.right = False, False
                     player.move_y = 0 - speed_player
                 elif event.key == pygame.K_DOWN:
+                    # player.left, player.right = False, False
                     player.move_y = speed_player
                 if event.key == pygame.K_p:
                     pause()
+                    flag = True
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     player.move_x = 0
@@ -112,14 +124,18 @@ def progress():
             seconds = datetime.datetime.now().second
             minute = datetime.datetime.now().minute
             count = 0
-            timer = 30
+            count2 = 0
             level += 1
+            if level == 1:
+                player.lives = 5
+                player.selected_monets = 0
             player.next_level = False
             player.open_door = False
             player.selected_monets = 0
-            walls.empty() # очищаем все группы спрайтов
+            walls.empty()  # очищаем все группы спрайтов
             finish.empty()
             enemies.empty()
+            monets.empty()
             if level == 6:
                 level = 1
                 the_end()
@@ -130,16 +146,20 @@ def progress():
             screen.fill(screen_color)
             timer_text = menu_font.render(f"{timer - count}", True, (255, 255, 255))
             screen.blit(timer_text, (10, 100))
-
-            if (seconds + 30 == datetime.datetime.now().second) or \
+            if flag:
+                seconds = datetime.datetime.now().second
+                minute = datetime.datetime.now().minute
+                flag = False
+            if flag is False and (seconds + 30 == datetime.datetime.now().second) or \
                     (minute + 1 == datetime.datetime.now().minute and
                      datetime.datetime.now().second == 30 - (60 - seconds)):
                 seconds = datetime.datetime.now().second
                 minute = datetime.datetime.now().minute
                 count = 0
                 timer = 30
+                flag2 = True
 
-            elif (seconds + count == datetime.datetime.now().second) or \
+            if flag is False and (seconds + count == datetime.datetime.now().second) or \
                     (minute + 1 == datetime.datetime.now().minute and
                      datetime.datetime.now().second + 60 == seconds + count):
                 count += 1
@@ -147,6 +167,25 @@ def progress():
                 screen.blit(timer_text, (10, 100))
 
             # отображаем информацию о количестве жизней
+            if flag2:
+                player.lives -= 1
+                player.used_lives += 1
+                player.rect.x = start_dort[level][0]
+                player.rect.y = start_dort[level][1]
+                flag2 = False
+
+            if player.lives == 0: # если жизни закончились
+                level = 1
+                num_of_try += 1
+                player.lives = 5
+                player.selected_monets = 0
+                player.next_level = False
+                player.open_door = False
+                walls.empty()  # очищаем все группы спрайтов
+                finish.empty()
+                enemies.empty()
+                create_level(level)
+
             about_lives_mess = lives_monets_font.render(f'Количество жизней: {player.lives}', True, (255, 162, 0))
             screen.blit(about_lives_mess, (235, 95))
 
@@ -155,6 +194,14 @@ def progress():
                                                          f'{player.selected_monets}/{len(monet_coords[level])}',
                                                          True, (255, 255, 0))
             screen.blit(about_monets_mess, (225, 120))
+
+            # отобрвжвем номер уровня
+            level_mess = lives_monets_font.render(f'УРОВЕНЬ {level}', True, (255, 255, 255))
+            screen.blit(level_mess, (336, 10))
+
+            # отображаем № попытки
+            level_mess = lives_monets_font.render(f'Попытка {num_of_try}', True, (255, 0, 0))
+            screen.blit(level_mess, (10, 10))
 
             # Отображаем стены
             walls.draw(screen)
@@ -314,6 +361,8 @@ pygame.display.set_caption('The maze infested with monsters')
 clock = pygame.time.Clock()
 
 level = 1
+
+num_of_try = 1
 
 walls = pygame.sprite.Group()
 finish = pygame.sprite.Group()
