@@ -3,7 +3,7 @@ import pygame
 
 class Monet(pygame.sprite.Sprite):
 
-    def __init__(self, x_coord, y_coord, width, height, group):
+    def __init__(self, x_coord, y_coord, group):
         super().__init__()
 
         self.image = pygame.image.load('images/монета1.png')

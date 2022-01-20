@@ -3,7 +3,8 @@ import pygame
 
 class Player(pygame.sprite.Sprite):
 
-    def __init__(self, x_coord, y_coord, width, height, walls_group, enemy_group, finish_group, monets):
+    def __init__(self, x_coord, y_coord, width, height, walls_group, enemy_group, finish_group, monets,
+                 heart_group):
         super().__init__()
 
         # left, right = False, False
@@ -75,6 +76,7 @@ class Player(pygame.sprite.Sprite):
         self.enemy_group = enemy_group
         self.finish_group = finish_group
         self.monet_group = monets
+        self.heart_group = heart_group
 
     def update(self, *args):
         # проверка, пора ли открывать стену выхода, если да, то мегяем ее цвет
@@ -133,9 +135,13 @@ class Player(pygame.sprite.Sprite):
             self.selected_monets += 1
             monet.kill()
 
+        # проверка на столкновение с монетами
+        selected_hearts = pygame.sprite.spritecollide(self, self.heart_group, False)
+        for heart in selected_hearts:
+            self.lives += 1
+            heart.kill()
+
         # проверка на столкновение с монстрами
         if pygame.sprite.spritecollideany(self, self.enemy_group):
             self.rect.x = self.start_coord_x
             self.rect.y = self.start_coord_y
-
-        # здесь будет проверка жизней, если их 0, то игрок возвращается на 1 уровень

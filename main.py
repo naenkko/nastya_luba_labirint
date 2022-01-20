@@ -4,6 +4,7 @@ from wall import Wall
 from player import Player
 from enemy import Enemy
 from monet import Monet
+from heart import Heart
 
 
 pygame.font.init()
@@ -50,7 +51,7 @@ def the_end():
         screen.fill((15, 82, 186))
         message_1 = menu_font.render('РЕЗУЛЬТАТЫ:', True, (0, 0, 0))
         message_2 = menu_font.render('всего:', True, (0, 0, 0))
-        message_3 = menu_font.render(f'потраченных жизней - {player.used_lives}', True, (0, 0, 0))
+        message_3 = menu_font.render(f'потраченных жизней - {player.used_lives}/7', True, (0, 0, 0))
         message_4 = menu_font.render('потраченного времени - ', True, (0, 0, 0))
         message_5 = menu_font.render('чтобы выйти из игры', True, (0, 0, 0))
         message_6 = menu_font.render('нажмите Q', True, (0, 0, 0))
@@ -136,6 +137,7 @@ def progress():
             finish.empty()
             enemies.empty()
             monets.empty()
+            hearts.empty()
             if level == 6:
                 level = 1
                 the_end()
@@ -184,6 +186,7 @@ def progress():
                 walls.empty()  # очищаем все группы спрайтов
                 finish.empty()
                 enemies.empty()
+                hearts.empty()
                 create_level(level)
 
             about_lives_mess = lives_monets_font.render(f'Количество жизней: {player.lives}', True, (255, 162, 0))
@@ -214,6 +217,9 @@ def progress():
 
             # отображаем монеты
             monets.draw(screen)
+
+            # отображаем сердца
+            hearts.draw(screen)
 
             # отображаем врагов
             enemies.draw(screen)
@@ -304,12 +310,16 @@ def create_level(level):
     # создание врагов на поле
     for i in range(len(enemy_info[level]['coords'])):
         Enemy(enemy_info[level]['coords'][i][0], enemy_info[level]['coords'][i][1],
-              30, 30,
               enemy_info[level]['move'][i][0], enemy_info[level]['move'][i][1], walls, enemies)
 
     # создание монет на поле
     for i in range(len(monet_coords[level])):
-        Monet(monet_coords[level][i][0], monet_coords[level][i][1], 20, 20, monets)
+        Monet(monet_coords[level][i][0], monet_coords[level][i][1], monets)
+
+    # создание сердец на поле
+    if len(heart_coords[level]) > 0:
+        for i in range(len(heart_coords[level])):
+            Heart(heart_coords[level][i][0], heart_coords[level][i][1], 25, 25, hearts)
 
     if level == 1:
         player.lives = 5
@@ -339,7 +349,8 @@ start_dort = {1: (10, 155),
 
 enemy_info = {1: {'coords': [(325, 245), (10, 425)], 'move': [(0, 1), (1, 0)]},
               2: {'coords': [(55, 380), (100, 515), (280, 425)], 'move': [(1, 0), (1, 0), (0, 1)]},
-              3: {'coords': [(415, 155), (190, 470), (10, 155)], 'move': [(0, 1), (1, 0), (1, 0)]},
+              3: {'coords': [(415, 155), (190, 470), (370, 155), (100, 335)],
+                  'move': [(0, 1), (1, 0), (1, 0), (1, 0)]},
               4: {'coords': [(145, 155), (10, 515), (370, 380), (235, 515)],
                   'move': [(0, 1), (1, 0), (0, 1), (1, 0)]},
               5: {'coords': [(10, 560), (145, 155), (190, 245)],
@@ -347,10 +358,17 @@ enemy_info = {1: {'coords': [(325, 245), (10, 425)], 'move': [(0, 1), (1, 0)]},
               }
 
 monet_coords = {1: [(240, 250), (105, 520), (240, 475)],
-                2: [(15, 250), (330, 160)],
+                2: [(15, 205), (330, 160), (375, 475)],
                 3: [(60, 160), (195, 430)],
-                4: [(105, 205), (375, 385), (285, 565)],
+                4: [(105, 205), (375, 385), (285, 565), (105, 340)],
                 5: [(105, 250), (195, 385), (150, 520)]
+                }
+
+heart_coords = {1: [],
+                2: [],
+                3: [(240, 340)],
+                4: [],
+                5: [(240, 430)]
                 }
 
 
@@ -368,9 +386,10 @@ walls = pygame.sprite.Group()
 finish = pygame.sprite.Group()
 enemies = pygame.sprite.Group()
 monets = pygame.sprite.Group()
+hearts = pygame.sprite.Group()
 
 # создание игрока
-player = Player(start_dort[level][0], start_dort[level][1], 20, 20, walls, enemies, finish, monets)
+player = Player(start_dort[level][0], start_dort[level][1], 20, 20, walls, enemies, finish, monets, hearts)
 speed_player = 3
 
 # создание точки, с которой игрок начинает движение

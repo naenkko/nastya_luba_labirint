@@ -3,7 +3,7 @@ import pygame
 
 class Enemy(pygame.sprite.Sprite):
 
-    def __init__(self, x_coord, y_coord, width, height, move_x, move_y, walls_group, enemy_group):
+    def __init__(self, x_coord, y_coord, move_x, move_y, walls_group, enemy_group):
         super().__init__()
 
         self.image = pygame.image.load('images/newmonster1.png')
