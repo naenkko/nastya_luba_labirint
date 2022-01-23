@@ -10,7 +10,7 @@ from heart import Heart
 pygame.font.init()
 menu_font = pygame.font.Font(None, 48)
 lives_monets_font = pygame.font.Font(None, 28)
-seconds, minute, count, flag, flag2, flag3, alltime, flag4 = 0, 0, 0, True, False, False, [], True
+seconds, minute, count, flag2, flag3, alltime, flag4 = 0, 0, 0, False, False, [], True
 
 
 def quit():
@@ -47,7 +47,7 @@ def pause():
 def the_end():
     global running
     global num_of_try, alltime
-    time_result = (datetime.datetime.now().minute - alltime[1]) * 60 + alltime[0]
+    time_result = (60 - ((alltime[1] - datetime.datetime.now().minute) % 60)) * 60 + alltime[0]
     while running:
         screen.fill((15, 82, 186))
         message_1 = menu_font.render('РЕЗУЛЬТАТЫ:', True, (0, 0, 0))
@@ -76,10 +76,7 @@ def the_end():
                     alltime = 0
                     start_menu()
                 elif event.key == pygame.K_q: # if u press Q u will get out of the game
-                    try:
-                        quit()
-                    except Exception:
-                        print('Game is over')
+                    quit()
 
         pygame.display.update()
 
@@ -89,12 +86,10 @@ def progress():
     global level
     global num_of_try, alltime
     global seconds
-    global minute
     global count
-    global flag, flag2, flag3, flag4
+    global flag2, flag3, flag4
 
     seconds = datetime.datetime.now().second
-    minute = datetime.datetime.now().minute
 
     if flag4:
         alltime = [datetime.datetime.now().second, datetime.datetime.now().minute]
@@ -125,7 +120,7 @@ def progress():
                     flag3 = True
                 if event.key == pygame.K_p:
                     pause()
-                    flag3, flag = False, True
+                    flag3 = False
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     player.move_x = 0
@@ -137,12 +132,9 @@ def progress():
                 f.image.fill(screen_color)
 
         if player.next_level and level <= 5:  # проверка, дошел ли игрок до финиша
-            seconds = datetime.datetime.now().second
-            minute = datetime.datetime.now().minute
             count = 0
             level += 1
             flag3 = False
-            flag = True
             if level == 1:
                 player.lives = 5
                 player.selected_monets = 0
@@ -165,25 +157,13 @@ def progress():
             timer_text = menu_font.render(f"{timer - count}", True, (255, 255, 255))
             screen.blit(timer_text, (10, 100))
             if flag3:
-                if flag:
-                    seconds = datetime.datetime.now().second
-                    minute = datetime.datetime.now().minute
-                    flag = False
-                if flag is False and (seconds + 30 == datetime.datetime.now().second) or \
-                        (minute + 1 == datetime.datetime.now().minute and
-                         datetime.datetime.now().second == 30 - (60 - seconds)):
-                    seconds = datetime.datetime.now().second
-                    minute = datetime.datetime.now().minute
+                if count == 30:
                     count = 0
-                    timer = 30
                     flag2 = True
-
-                if flag is False and (seconds + count == datetime.datetime.now().second) or \
-                        (minute + 1 == datetime.datetime.now().minute and
-                        datetime.datetime.now().second + 60 == seconds + count):
+                    flag3 = False
+                if datetime.datetime.now().second != seconds and 1000 - datetime.datetime.now().microsecond <= 950:
+                    seconds = datetime.datetime.now().second
                     count += 1
-                    timer_text = menu_font.render(f"{timer - count}", True, (255, 255, 255))
-                    screen.blit(timer_text, (10, 100))
 
             # отображаем информацию о количестве жизней
             if flag2:

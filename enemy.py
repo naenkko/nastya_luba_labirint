@@ -6,7 +6,7 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, x_coord, y_coord, move_x, move_y, walls_group, enemy_group):
         super().__init__()
 
-        self.image = pygame.image.load('images/newmonster1.png')
+        self.image = pygame.image.load('images/monster_right.png')
 
         self.rect = self.image.get_rect()
         self.rect.x = x_coord
@@ -32,8 +32,10 @@ class Enemy(pygame.sprite.Sprite):
             hit_wall = pygame.sprite.spritecollide(self, self.walls_group, False)
             for wall in hit_wall:
                 if self.move_x > 0:
+                    self.image = pygame.transform.flip(self.image, True, False)
                     self.rect.right = wall.rect.left
                 elif self.move_x < 0:
+                    self.image = pygame.transform.flip(self.image, True, False)
                     self.rect.left = wall.rect.right
                 self.move_x *= -1
 
