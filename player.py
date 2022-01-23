@@ -7,52 +7,12 @@ class Player(pygame.sprite.Sprite):
                  heart_group):
         super().__init__()
 
-        # left, right = False, False
-        # right_walk = ['player1.png', 'player2.png', 'player3.png', 'player4.png']
-        # left_walk = ['player5.png', 'player6.png', 'player7.png', 'player8.png']
-        # straight_walk = 'player9.png'
-        # if left is True and right is False:
-        #     count = 5
-        #     self.last_update = pygame.time.get_ticks()
-        #     if count == 5 and pygame.time.get_ticks() - self.last_update > 5:
-        #         self.image = pygame.image.load(left_walk[0])
-        #         count += 1
-        #         self.last_update = pygame.time.get_ticks()
-        #     elif count == 6 and pygame.time.get_ticks() - self.last_update > 5:
-        #         self.image = pygame.image.load(left_walk[1])
-        #         count += 1
-        #         self.last_update = pygame.time.get_ticks()
-        #     elif count == 7 and pygame.time.get_ticks() - self.last_update > 5:
-        #         self.image = pygame.image.load(left_walk[2])
-        #         count += 1
-        #         self.last_update = pygame.time.get_ticks()
-        #     elif count == 8 and pygame.time.get_ticks() - self.last_update > 5:
-        #         self.image = pygame.image.load(left_walk[1])
-        #         count -= 3
-        #         self.last_update = pygame.time.get_ticks()
-        # if left is False and right is True:
-        #     count = 1
-        #     self.last_update = pygame.time.get_ticks()
-        #     if count == 1 and pygame.time.get_ticks() - self.last_update > 5:
-        #         self.image = pygame.image.load(right_walk[0])
-        #         count += 1
-        #         self.last_update = pygame.time.get_ticks()
-        #     elif count == 2 and pygame.time.get_ticks() - self.last_update > 5:
-        #         self.image = pygame.image.load(right_walk[1])
-        #         count += 1
-        #         self.last_update = pygame.time.get_ticks()
-        #     elif count == 3 and pygame.time.get_ticks() - self.last_update > 5:
-        #         self.image = pygame.image.load(right_walk[2])
-        #         count += 1
-        #         self.last_update = pygame.time.get_ticks()
-        #     elif count == 4 and pygame.time.get_ticks() - self.last_update > 5:
-        #         self.image = pygame.image.load(right_walk[1])
-        #         count -= 3
-        #         self.last_update = pygame.time.get_ticks()
-        # if left is False and right is False:
-        #     self.image = pygame.image.load(straight_walk)
-
-        self.image = pygame.image.load('images/new_player7.png')
+        self.players = [pygame.image.load('images/the_newest_player_up.png'), pygame.image.load(
+            'images/the_newest_player_down.png'),
+                        pygame.image.load('images/the_newest_player_left.png'), pygame.image.load(
+                'images/the_newest_player_right.png'),
+                        pygame.image.load('images/the_newest_player_straight.png')]
+        self.image = self.players[4]
 
         self.rect = self.image.get_rect()
         self.rect.x = x_coord
@@ -77,7 +37,23 @@ class Player(pygame.sprite.Sprite):
         self.monet_group = monets
         self.heart_group = heart_group
 
+    def left(self):
+        self.image = self.players[2]
+
+    def right(self):
+        self.image = self.players[3]
+
+    def straight(self):
+        self.image = self.players[4]
+
+    def up(self):
+        self.image = self.players[0]
+
+    def down(self):
+        self.image = self.players[1]
+
     def update(self, *args):
+
         # проверка, пора ли открывать стену выхода, если да, то мегяем ее цвет
         if not self.monet_group:
             self.open_door = True
