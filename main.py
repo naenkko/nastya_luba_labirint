@@ -97,19 +97,15 @@ def progress():
                 running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
-                    # player.left, player.right = True, False
                     flag3 = True
                     player.move_x = 0 - speed_player
                 elif event.key == pygame.K_RIGHT:
-                    # player.left, player.right = False, True
                     player.move_x = speed_player
                     flag3 = True
                 if event.key == pygame.K_UP:
-                    # player.left, player.right = False, False
                     player.move_y = 0 - speed_player
                     flag3 = True
                 elif event.key == pygame.K_DOWN:
-                    # player.left, player.right = False, False
                     player.move_y = speed_player
                     flag3 = True
                 if event.key == pygame.K_p:
