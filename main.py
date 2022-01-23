@@ -10,7 +10,7 @@ from heart import Heart
 pygame.font.init()
 menu_font = pygame.font.Font(None, 48)
 lives_monets_font = pygame.font.Font(None, 28)
-seconds, minute, count, flag, flag2, count2, flag3 = 0, 0, 0, True, False, 0, False
+seconds, minute, count, flag, flag2, flag3, alltime, flag4 = 0, 0, 0, True, False, False, [], True
 
 
 def quit():
@@ -26,7 +26,7 @@ def pause():
                 running = False
                 quit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_c:  # if u press C the game will continue
+                if event.key == pygame.K_c: # if u press C the game will continue
                     pause_game = False
                 elif event.key == pygame.K_q:  # if u do Q the game will over
                     quit()
@@ -46,23 +46,26 @@ def pause():
 
 def the_end():
     global running
-    global num_of_try
+    global num_of_try, alltime
+    time_result = (datetime.datetime.now().minute - alltime[1]) * 60 + alltime[0]
     while running:
         screen.fill((15, 82, 186))
         message_1 = menu_font.render('РЕЗУЛЬТАТЫ:', True, (0, 0, 0))
         message_2 = menu_font.render('всего:', True, (0, 0, 0))
         message_3 = menu_font.render(f'потраченных жизней - {player.used_lives}/7', True, (0, 0, 0))
-        message_4 = menu_font.render('потраченного времени - ', True, (0, 0, 0))
+        message_4 = menu_font.render(f'прошло времени - {time_result}c', True, (0, 0, 0))
         message_5 = menu_font.render('чтобы выйти из игры', True, (0, 0, 0))
         message_6 = menu_font.render('нажмите Q', True, (0, 0, 0))
         message_7 = menu_font.render('вернуться на старт - B', True, (0, 0, 0))
+        message_8 = menu_font.render(f'кол-во попыток - {num_of_try}', True, (0, 0, 0))
         screen.blit(message_1, (100, 120))
         screen.blit(message_2, (1250, 160))
         screen.blit(message_3, (10, 200))
         screen.blit(message_4, (10, 240))
-        screen.blit(message_5, (10, 280))
-        screen.blit(message_6, (700, 320))
-        screen.blit(message_7, (10, 360))
+        screen.blit(message_5, (10, 320))
+        screen.blit(message_6, (105, 360))
+        screen.blit(message_7, (10, 400))
+        screen.blit(message_8, (10, 280))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -70,6 +73,7 @@ def the_end():
                 if event.key == pygame.K_b: # if u press B u will back to the start menu
                     num_of_try = 1
                     player.used_lives = 0
+                    alltime = 0
                     start_menu()
                 elif event.key == pygame.K_q: # if u press Q u will get out of the game
                     quit()
@@ -80,41 +84,45 @@ def the_end():
 def progress():
     global running
     global level
-    global num_of_try
+    global num_of_try, alltime
     global seconds
     global minute
-    global count, count2
-    global flag, flag2, flag3
-    global left, right
+    global count
+    global flag, flag2, flag3, flag4
 
     seconds = datetime.datetime.now().second
     minute = datetime.datetime.now().minute
 
+    if flag4:
+        alltime = [datetime.datetime.now().second, datetime.datetime.now().minute]
+        flag4 = False
+
     while running:
         timer = 30
         for event in pygame.event.get():
+            player.straight()
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
-                    # player.left, player.right = True, False
+                    player.left()
                     flag3 = True
                     player.move_x = 0 - speed_player
                 elif event.key == pygame.K_RIGHT:
-                    # player.left, player.right = False, True
+                    player.right()
                     player.move_x = speed_player
                     flag3 = True
                 if event.key == pygame.K_UP:
-                    # player.left, player.right = False, False
+                    player.up()
                     player.move_y = 0 - speed_player
                     flag3 = True
                 elif event.key == pygame.K_DOWN:
-                    # player.left, player.right = False, False
+                    player.down()
                     player.move_y = speed_player
                     flag3 = True
                 if event.key == pygame.K_p:
                     pause()
-                    flag = True
+                    flag3, flag = False, True
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     player.move_x = 0
@@ -129,7 +137,6 @@ def progress():
             seconds = datetime.datetime.now().second
             minute = datetime.datetime.now().minute
             count = 0
-            count2 = 0
             level += 1
             flag3 = False
             flag = True
