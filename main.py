@@ -76,7 +76,10 @@ def the_end():
                     alltime = 0
                     start_menu()
                 elif event.key == pygame.K_q: # if u press Q u will get out of the game
-                    quit()
+                    try:
+                        quit()
+                    except Exception:
+                        print('Game is over')
 
         pygame.display.update()
 
@@ -414,4 +417,5 @@ start.rect = start.image.get_rect()
 
 running = True
 
-start_menu()
+if __name__ == '__main__':
+    start_menu()
