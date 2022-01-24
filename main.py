@@ -10,6 +10,7 @@ from heart import Heart
 pygame.font.init()
 menu_font = pygame.font.Font(None, 48)
 lives_monets_font = pygame.font.Font(None, 28)
+pause_font = pygame.font.Font(None, 39)
 seconds, minute, count, flag2, flag3, alltime, flag4 = 0, 0, 0, False, False, [], True
 
 
@@ -30,15 +31,21 @@ def pause():
                     pause_game = False
                 elif event.key == pygame.K_q:  # if u do Q the game will over
                     quit()
+                elif event.key == pygame.K_RIGHT:
+                    pygame.mixer.music.set_volume(pygame.mixer.music.get_volume() + 0.1)
+                elif event.key == pygame.K_LEFT:
+                    pygame.mixer.music.set_volume(pygame.mixer.music.get_volume() - 0.1)
         screen.fill((15, 82, 186))
         message1 = menu_font.render('PAUSED', True, (0, 0, 0))
-        message2 = menu_font.render('нажмите C, чтобы', True, (0, 0, 0))
-        message3 = menu_font.render('продолжить', True, (0, 0, 0))
-        message4 = menu_font.render('или Q, чтобы выйти', True, (0, 0, 0))
-        screen.blit(message1, (150, 120))
-        screen.blit(message2, (80, 220))
-        screen.blit(message3, (110, 270))
-        screen.blit(message4, (55, 320))
+        message2 = pause_font.render('Нажмите "C", чтобы продолжить', True, (0, 0, 0))
+        message4 = pause_font.render('или "Q", чтобы выйти', True, (0, 0, 0))
+        volum_plus_mess = pause_font.render('Увеличить громкость - ">"', True, (0, 0, 0))
+        volum_minus_mess = pause_font.render('Уменьшить громкость - "<"', True, (0, 0, 0))
+        screen.blit(message1, (160, 120))
+        screen.blit(message2, (10, 200))
+        screen.blit(message4, (82, 250))
+        screen.blit(volum_plus_mess, (50, 480))
+        screen.blit(volum_minus_mess, (50, 515))
 
         pygame.display.update()
         clock.tick(10)
@@ -373,9 +380,13 @@ pygame.init()
 screen = pygame.display.set_mode(screen_size)
 pygame.display.set_caption('The maze infested with monsters')
 
+# добавляем фоновую музыку
+pygame.mixer.music.load('music.mp3')
+pygame.mixer.music.play(-1)
+
 clock = pygame.time.Clock()
 
-level = 1
+level = 5
 
 num_of_try = 1
 
