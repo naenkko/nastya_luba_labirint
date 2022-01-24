@@ -31,6 +31,9 @@ class Player(pygame.sprite.Sprite):
         self.next_level = False
         self.open_door = False
 
+        self.take_monet = False
+        self.kill_by_monster = False
+
         self.walls_group = walls_group
         self.enemy_group = enemy_group
         self.finish_group = finish_group
@@ -108,15 +111,18 @@ class Player(pygame.sprite.Sprite):
         selected_monet = pygame.sprite.spritecollide(self, self.monet_group, False)
         for monet in selected_monet:
             self.selected_monets += 1
+            self.take_monet = True
             monet.kill()
 
-        # проверка на столкновение с монетами
+        # проверка на столкновение с сердцами
         selected_hearts = pygame.sprite.spritecollide(self, self.heart_group, False)
         for heart in selected_hearts:
+            self.take_monet = True
             self.lives += 1
             heart.kill()
 
         # проверка на столкновение с монстрами
         if pygame.sprite.spritecollideany(self, self.enemy_group):
+            self.kill_by_monster = True
             self.rect.x = self.start_coord_x
             self.rect.y = self.start_coord_y

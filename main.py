@@ -138,7 +138,16 @@ def progress():
             for f in finish:
                 f.image.fill(screen_color)
 
+        if player.take_monet: # если игрок собрал монету, воспроизводим звук
+            take_nonet_sound.play()
+            player.take_monet = False
+
+        if player.kill_by_monster: # если игрок врезался в монстра, воспроизводим звук
+            hit_monster_sound.play()
+            player.kill_by_monster = False
+
         if player.next_level and level <= 5:  # проверка, дошел ли игрок до финиша
+            next_level__sound.play()
             count = 0
             level += 1
             flag3 = False
@@ -174,6 +183,7 @@ def progress():
 
             # отображаем информацию о количестве жизней
             if flag2:
+                hit_monster_sound.play()
                 player.lives -= 1
                 player.used_lives += 1
                 player.rect.x = start_dort[level][0]
@@ -381,12 +391,17 @@ screen = pygame.display.set_mode(screen_size)
 pygame.display.set_caption('The maze infested with monsters')
 
 # добавляем фоновую музыку
-pygame.mixer.music.load('music.mp3')
+pygame.mixer.music.load('sounds/music.mp3')
 pygame.mixer.music.play(-1)
+
+# добавляем звуки
+take_nonet_sound = pygame.mixer.Sound('sounds/take_monet_sound.wav')
+hit_monster_sound = pygame.mixer.Sound('sounds/monster_hit_sound.wav')
+next_level__sound = pygame.mixer.Sound('sounds/next_level_sound.wav')
 
 clock = pygame.time.Clock()
 
-level = 5
+level = 1
 
 num_of_try = 1
 
