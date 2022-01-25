@@ -33,8 +33,14 @@ def pause():
                     quit()
                 elif event.key == pygame.K_RIGHT:
                     pygame.mixer.music.set_volume(pygame.mixer.music.get_volume() + 0.1)
+                    next_level__sound.set_volume(next_level__sound.get_volume() + 0.1)
+                    hit_monster_sound.set_volume(hit_monster_sound.get_volume() + 0.1)
+                    take_monet_sound.set_volume(take_monet_sound.get_volume() + 0.1)
                 elif event.key == pygame.K_LEFT:
                     pygame.mixer.music.set_volume(pygame.mixer.music.get_volume() - 0.1)
+                    next_level__sound.set_volume(next_level__sound.get_volume() - 0.1)
+                    hit_monster_sound.set_volume(hit_monster_sound.get_volume() - 0.1)
+                    take_monet_sound.set_volume(take_monet_sound.get_volume() - 0.1)
         screen.fill((15, 82, 186))
         message1 = menu_font.render('PAUSED', True, (0, 0, 0))
         message2 = pause_font.render('Нажмите "C", чтобы продолжить', True, (0, 0, 0))
@@ -139,7 +145,7 @@ def progress():
                 f.image.fill(screen_color)
 
         if player.take_monet: # если игрок собрал монету, воспроизводим звук
-            take_nonet_sound.play()
+            take_monet_sound.play()
             player.take_monet = False
 
         if player.kill_by_monster: # если игрок врезался в монстра, воспроизводим звук
@@ -395,7 +401,7 @@ pygame.mixer.music.load('sounds/music.mp3')
 pygame.mixer.music.play(-1)
 
 # добавляем звуки
-take_nonet_sound = pygame.mixer.Sound('sounds/take_monet_sound.wav')
+take_monet_sound = pygame.mixer.Sound('sounds/take_monet_sound.wav')
 hit_monster_sound = pygame.mixer.Sound('sounds/monster_hit_sound.wav')
 next_level__sound = pygame.mixer.Sound('sounds/next_level_sound.wav')
 
